@@ -21,8 +21,9 @@ Using the terminal proceed with the next steps
     ```bash
     docker-compose run --rm -w /var/www/html  app composer install --no-interaction --no-dev \
                     && cp .env.example .env \
-                    && php artisan key:generate \
-                    && php artisan migrate --force --no-interaction
+                    && php artisan key:generate 
+    
+    docker-compose run --rm -w /var/www/html  app php artisan migrate --force --no-interaction
     ```
 4) You are ready to access it now from your browser
 [localhost:8080](http://localhost:8080).
