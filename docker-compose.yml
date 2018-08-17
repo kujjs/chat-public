@@ -1,0 +1,41 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    image: php-nginx
+    restart: always
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./storage/app/public:/var/www/html/public/storage
+      - ./docker/php/php.ini:/etc/php/7.2/php.ini
+    ports:
+      - "8080:80"
+    networks:
+      - mynet
+  redis:
+    image: redis:alpine
+    volumes:
+      - redisdata:/data
+    networks:
+      - mynet
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "8333:3306"
+    restart: always
+    volumes:
+      - mysqldata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: site
+    networks:
+    - mynet
+networks:
+  mynet:
+    driver: "bridge"
+volumes:
+  mysqldata:
+  redisdata:
