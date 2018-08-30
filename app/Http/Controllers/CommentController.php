@@ -15,13 +15,12 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $name = Cache::get('name');
 
         $comments = Cache::remember('comments', 5, function() {
             return Comment::orderby('created_at','desc')->with('media')->get();
         });
 
-        return view('Comment.home',compact('name','comments'));
+        return view('Comment.home',compact('comments'));
     }
 
 
@@ -34,7 +33,6 @@ class CommentController extends Controller
     public function store(CommentRequest $request)
     {
         if($request->createComment()){
-            Cache::put('name',$request->name,5);
             Cache::forget('comments');
             return back();
         }

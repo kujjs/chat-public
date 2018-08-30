@@ -11,7 +11,7 @@
         <div class=" col-6 pr-5">
             @include('Comment._form')
         </div>
-        <div class=" col-6">
+        <div class=" col-6" id="messages">
             @each('Comment._item', $comments, 'comment','Comment._empty_item')
         </div>
     </div>

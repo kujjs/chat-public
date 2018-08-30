@@ -13,10 +13,10 @@
         </ul>
     </div>
 @endif
-{{ Form::open(['route'=>'home.comment','method'=>'post','files'=>true]) }}
+{{ Form::open(['route'=>'home.comment','method'=>'post','id'=>'FormMessage']) }}
 <div class="form-group">
     {{ Form::label('name',__('Username')) }}
-    {{ Form::text('name',$name,['class'=>'form-control']) }}
+    {{ Form::text('name',null,['class'=>'form-control']) }}
 </div>
 <div class="form-group">
     {{ Form::label('body',__('Message')) }}
@@ -39,14 +39,11 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
     <script>
-        $(function() {
         var mediaInput = $('#media');
         var mediaArray = [];
-
-        mediaArray = mediaInput.val().split(',').filter(function(value){return value!==''});
-
+        var myDropzone;
         Dropzone.autoDiscover = false;
-        var myDropzone = new Dropzone('#dropzoneFile',{
+        myDropzone = new Dropzone('#dropzoneFile',{
             url: "{{ route('home.comment.upload') }}",
             params: {_token: '{{ csrf_token() }}'},
             acceptedFiles: "image/*,video/*",
@@ -64,6 +61,36 @@
                 mediaInput.val(mediaArray.toString());
             }
         });
+        $('#FormMessage').submit(function (event) {
+            event.preventDefault();
+            console.log($(this).serialize());
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+
+                data: $(this).serialize(),
+            })
+                .done(function() {
+                    $('#body').val('');
+                    $('#media').val('');
+                    mediaArray = [];
+                    myDropzone.emit('reset');
+                    $(".dz-preview").remove();
+                })
+                .fail(function() {
+                    console.log("error");
+                })
+                .always(function() {
+                    console.log("complete");
+                });
+        })
+        mediaInput = $('#media');
+
+        $(function() {
+
+        mediaArray = mediaInput.val().split(',').filter(function(value){return value!==''});
+
+
         $.each(mediaInput.val().split(','), function(key,value){
             if (value == '') {
                 return;

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Comment;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Redis;
 
 class CommentRequest extends FormRequest
 {
@@ -38,6 +39,21 @@ class CommentRequest extends FormRequest
             'body' => $this->body
         ]);
         $comment->attachMedia($this->media);
+//
+        $medias = [];
+        if($this->media){
+            foreach ($comment->media as $media){
+                array_push($medias, ['url'=>$media->url_real_media,'is_image'=>$media->isImage()]);
+            }
+
+        }
+        $comment = [
+            'name' => $comment->name,
+            'body' => $comment->body,
+            'media' => $medias,
+            'created_at' =>(string)$comment->created_at
+        ];
+        Redis::publish('canal', json_encode($comment));
         return $comment;
     }
 }

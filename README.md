@@ -15,7 +15,7 @@ Using the terminal proceed with the next steps
 2)  Access the project folder and run the docker composer
     ``` bash
     cd ./chat-public
-    docker-compose up -d --build
+    docker-compose build
     ```
 3) Run the next command to finish the installation of the project
     ```bash
@@ -24,6 +24,10 @@ Using the terminal proceed with the next steps
                     && php artisan key:generate 
     
     docker-compose run --rm -w /var/www/html  app php artisan migrate --force --no-interaction
+    
+    docker-compose run --rm -w /home/node/app node npm  i
+    
+    docker-compose up -d
     ```
 4) You are ready to access it now from your browser
 [localhost:8080](http://localhost:8080).

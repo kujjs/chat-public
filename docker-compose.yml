@@ -32,7 +32,19 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: site
     networks:
-    - mynet
+      - mynet
+  node:
+    image: node:alpine
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    working_dir: /home/node/app
+    volumes:
+      - ./node/app:/home/node/app
+    command: "node index"
+    networks:
+      - mynet
 networks:
   mynet:
     driver: "bridge"
