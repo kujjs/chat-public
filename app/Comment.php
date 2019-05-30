@@ -18,12 +18,11 @@ class Comment extends Model
         if ($media == '')
             return;
 
-        $media = explode(',', $media);
-
-        Media::whereIn('name',$media)->update([
+        Media::whereIn('id',array_column($media,'id'))->update([
             'attach_id' => $this->id,
             'attach_type' => get_class($this)
             ]);
+
 
     }
 

@@ -15,12 +15,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-
-        $comments = Cache::remember('comments', 5, function() {
-            return Comment::orderby('created_at','desc')->with('media')->get();
-        });
-
-        return view('Comment.home',compact('comments'));
+        return view('Comment.home');
     }
 
 
@@ -32,22 +27,22 @@ class CommentController extends Controller
      */
     public function store(CommentRequest $request)
     {
-        if($request->createComment()){
-            Cache::forget('comments');
-            return back();
-        }
-        return redirect()->route('home.comment,')->setStatusCode(400);
+        return $request->createComment();
     }
 
 
     /**
      * @param UploadMediaRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      */
     public function upload(UploadMediaRequest $request)
     {
-        $file = $request->createMedia();
-        return response()->json(['url'=>$file->url,'name'=>$file->name],200);
+       return (Array) $request->createMedia();
+    }
+
+    public function messages()
+    {
+        return Comment::orderby('created_at','desc')->with('media')->get();//->toArray();
     }
 }

@@ -34,6 +34,10 @@ class UploadMediaRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    {
+        return ['file.*'=>'Archivo'];
+    }
 
     /**
      * @return Media

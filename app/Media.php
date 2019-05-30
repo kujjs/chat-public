@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Storage;
 class Media extends Model
 {
     protected $fillable = ['name','type'];
+    protected $visible = ['id','url_real_media','url','is_image', 'name'];
+    protected $appends = ['url_real_media','is_image','url'];
 
     public function attach()
     {
@@ -26,6 +28,10 @@ class Media extends Model
         return url(Storage::url(''.$this->name));
     }
 
+    public function getIsImageAttribute()
+    {
+        return $this->isImage();
+    }
     public function isImage()
     {
         return explode('/',$this->type)[0] === 'image';

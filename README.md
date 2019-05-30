@@ -15,17 +15,18 @@ Using the terminal proceed with the next steps
 2)  Access the project folder and run the docker composer
     ``` bash
     $   cd ./chat-public
-    $   docker-compose up -d --build
+    $   docker-compose up -d --builder
     ```
 3) Run the next command to finish the installation of the project
     ```bash
-    $   docker-compose run --rm -w /var/www/html  app composer install --no-interaction --no-dev \
+    $   docker-compose run --rm app composer install --no-interaction --no-dev \
                     && cp .env.example .env \
                     && php artisan key:generate 
     
-    $   docker-compose run --rm -w /var/www/html  app php artisan migrate --force --no-interaction
+    $   docker-compose run --rm app php artisan migrate --force --no-interaction
     
-    $   docker-compose run --rm -w /home/node/app node npm  i
+    $   docker-compose run --rm app php artisan websockets:serve
+    $   docker-compose run --rm node npm  i #creo que no
     
     $   docker-compose up -d
     ```
@@ -41,4 +42,3 @@ $   docker volume rm chat-public_mysqldata chat-public_redisdata
 
 
 
-   
