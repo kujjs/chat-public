@@ -8,17 +8,19 @@
     <title>Chat public</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @stack('css')
 </head>
 <body>
 <div id="app" class="container">
-    @yield('content')
-
+    <router-view></router-view>
 </div>
 
 <script src="{{ asset('js/app.js') }}"></script>
 
-@stack('footer')
+<script>
+    $('[data-fancybox="gallery"]').fancybox({
+        loop: true
+    });
+</script>
 
 <script>
 

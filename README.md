@@ -25,7 +25,8 @@ Using the terminal proceed with the next steps
     
     $   docker-compose run --rm app php artisan migrate --force --no-interaction
     
-    $   docker-compose run --rm app php artisan websockets:serve
+    $   docker-compose run --rm app php artisan passport:install 
+    $   docker-compose run --rm app php artisan websockets:serve #creo que no
     $   docker-compose run --rm node npm  i #creo que no
     
     $   docker-compose up -d

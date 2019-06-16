@@ -1,16 +1,19 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import router from './routes';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
+        name: localStorage.getItem('name') || '',
         messages: [],
         files: [],
         errors: [],
         loading: false,
-        sending: false
+        sending: false,
+        accessToken: localStorage.getItem('accessToken') || null
     },
     getters: {
         filesId: state => {
@@ -26,6 +29,7 @@ export default new Vuex.Store({
             state.messages = messages;
         },
         set_message(state, message) {
+
             state.messages.unshift(message);
         },
         set_file(state, file) {
@@ -49,6 +53,12 @@ export default new Vuex.Store({
         },
         change_sending(state, sending) {
             state.sending = sending
+        },
+        setAccessToken(state, token) {
+            state.accessToken = token
+        },
+        set_name(state, name) {
+            state.name = name
         }
 
 
@@ -68,12 +78,16 @@ export default new Vuex.Store({
         clearError({commit}) {
             commit('clean_error');
         },
+        setMessage({commit},message) {
+            commit('set_message',message);
+        },
         clearFiles({commit}) {
             commit('clean_files')
         },
-        getMessages({commit}) {
+        getMessages({commit, state}) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + state.accessToken;
             commit('change_loading', true);
-            axios.get('/messages').then(res => {
+            axios.get('/api/messages').then(res => {
                 commit('set_messages', res.data);
                 commit('change_loading', false);
             })
@@ -84,10 +98,10 @@ export default new Vuex.Store({
         },
         sendMessage({commit, state, getters}, data) {
             commit('change_sending', true);
-
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + state.accessToken;
             let sendData = {
                 id: getters.messagesId[0] + 1,
-                name: data.user,
+                name: state.name,
                 body: data.message,
                 media: state.files,
                 created_at: Date.now(),
@@ -96,11 +110,42 @@ export default new Vuex.Store({
 
             commit('set_message', sendData);
 
-            axios.post('/', sendData).then(res => {
+            axios.post('/api/messages', sendData).then(res => {
 
             });
             commit('change_sending', false);
 
+        },
+        login({commit, state}, data) {
+            commit('change_sending', true);
+            axios.post('/api/login', data).then(res => {
+
+                localStorage.setItem('accessToken', res.data.access_token);
+                localStorage.setItem('name', res.data.name);
+                commit('setAccessToken', res.data.access_token);
+                commit('set_name', res.data.name);
+                router.push('/');
+                commit('change_sending', false);
+            }, error => {
+                console.log(error.message)
+                commit('change_sending', false);
+            });
+
+        },
+        logout({commit, state}, data) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + state.accessToken;
+            commit('change_sending', true);
+
+            axios.post('/api/logout', data).then(res => {
+                localStorage.setItem('accessToken', null);
+                commit('setAccessToken', null);
+                router.push('/login');
+                commit('change_sending', false);
+            }, error => {
+                localStorage.setItem('accessToken', null);
+                commit('setAccessToken', null);
+                commit('change_sending', false);
+            });
         }
     }
 });

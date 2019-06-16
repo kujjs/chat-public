@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 
 
-class UploadMediaRequest extends FormRequest
+class MediaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -42,7 +42,7 @@ class UploadMediaRequest extends FormRequest
     /**
      * @return Media
      */
-    public function createMedia()
+    public function upload()
     {
         $file =  $this->file[0]->store('public');
 

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Comment;
+use App\Message;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -40,7 +40,7 @@ class CommentTest extends TestCase
     /** @test  */
     public function a_user_guest_can_view_other_comments()
     {
-        factory(Comment::class)->create(['body'=>'lorem ipsum lorem']);
+        factory(Message::class)->create(['body'=>'lorem ipsum lorem']);
 
         $response = $this->get(route('home.comment'));
         $response->assertOk()

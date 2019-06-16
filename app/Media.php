@@ -11,10 +11,10 @@ class Media extends Model
     protected $visible = ['id','url_real_media','url','is_image', 'name'];
     protected $appends = ['url_real_media','is_image','url'];
 
-    public function attach()
-    {
-        return $this->morphTo();
-    }
+//    public function attachable()
+//    {
+//        return $this->morphTo();
+//    }
 
     public function setNameAttribute($name){
         $this->attributes['name'] =  str_replace('public/', '', $name);
@@ -25,7 +25,7 @@ class Media extends Model
     }
     public function getUrlRealMediaAttribute()
     {
-        return url(Storage::url(''.$this->name));
+        return url(Storage::url($this->name));
     }
 
     public function getIsImageAttribute()

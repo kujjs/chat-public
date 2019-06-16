@@ -3,6 +3,7 @@ window._ = require('lodash');
 window.Popper = require('popper.js').default;
 import 'es6-promise/auto'
 
+
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
  * for JavaScript based Bootstrap features such as modals and tabs. This
@@ -58,5 +59,10 @@ window.Echo = new Echo({
     wsPort: 6001,
     disableStats: true,
     enabledTransports: ['ws', 'wss'],
+    auth: {
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.accessToken
+        }
+    }
 });
 

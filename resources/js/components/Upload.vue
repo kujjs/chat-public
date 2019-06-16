@@ -25,16 +25,10 @@
 
     export default {
         name: "uploadComponent",
-        props: {
-            url: {
-                type: String,
-                required: true
-            }
-        },
         data() {
             return {
                 dropOptions: {
-                    url: this.url,
+                    url: '/api/file',
                     params: {_token: window.axios.defaults.headers.common['X-CSRF-TOKEN']},
                     acceptedFiles: "image/*,video/*",
                     paramName: "file", // The name that will be used to transfer the file
@@ -44,6 +38,9 @@
                     parallelUploads: 1,
                     dictRemoveFile: 'Remove',
                     dictInvalidFileType: 'Remove',
+                    headers:{
+                        'Authorization': 'Bearer ' + this.$store.state.accessToken
+                    }
 
                 }
             }
