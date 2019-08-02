@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Message;
 use App\Http\Requests\{MessageRequest, MediaRequest};
-use Illuminate\Support\Facades\Cache;
+
 
 
 class MessageController extends Controller
@@ -12,7 +12,7 @@ class MessageController extends Controller
     /**
      * @param MessageRequest $request
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Message
      */
     public function store(MessageRequest $request)
     {

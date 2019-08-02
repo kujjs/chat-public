@@ -17,7 +17,6 @@ const router = new vueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    // store.dispatch('fetchAccessToken');
     if (!store.state.accessToken && to.fullPath !== '/login') {
         next('/login');
     }

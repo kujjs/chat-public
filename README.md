@@ -15,19 +15,15 @@ Using the terminal proceed with the next steps
 2)  Access the project folder and run the docker composer
     ``` bash
     $   cd ./chat-public
-    $   docker-compose up -d --builder
+    $   docker-compose up -d --build 
     ```
 3) Run the next command to finish the installation of the project
     ```bash
-    $   docker-compose run --rm app composer install --no-interaction --no-dev \
-                    && cp .env.example .env \
-                    && php artisan key:generate 
-    
+    $   docker-compose run --rm composer install --no-interaction --no-dev 
+    $   docker-compose run --rm app cp .env.example .env 
+    $   docker-compose run --rm app php artisan key:generate 
     $   docker-compose run --rm app php artisan migrate --force --no-interaction
-    
-    $   docker-compose run --rm app php artisan passport:install 
-    $   docker-compose run --rm app php artisan websockets:serve #creo que no
-    $   docker-compose run --rm node npm  i #creo que no
+    $   docker-compose run --rm app php artisan passport:install --force --no-interaction 
     
     $   docker-compose up -d
     ```

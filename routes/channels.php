@@ -3,5 +3,5 @@
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('chat',function ($user) {
-    return $user;
+    return $user->only(['id','name']);
 });

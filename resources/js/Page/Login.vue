@@ -3,9 +3,7 @@
         <div class="col-sm-6 offset-3 p-5">
             <div class="card">
                 <article class="card-body">
-                    <h4 class="card-title mb-4 mt-1">Connect to Chat
-                        <span class="badge badge-info badge-pill text-white float-sm-right">0 online</span>
-                    </h4>
+                    <h4 class="card-title mb-4 mt-1">login to chat</h4>
 
                     <form method="post" v-on:submit.prevent="login">
                         <div class="form-group">

@@ -61,7 +61,11 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
     auth: {
         headers: {
-            'Authorization': 'Bearer ' + localStorage.accessToken
+            Authorization: {
+                toString () {
+                    return `Bearer ${localStorage.accessToken}`
+                }
+            }
         }
     }
 });

@@ -7,6 +7,10 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 
 
+/**
+ * @property UploadedFile file
+ */
+
 class MediaRequest extends FormRequest
 {
     /**
@@ -27,16 +31,15 @@ class MediaRequest extends FormRequest
     public function rules()
     {
         return [
-            'file.*'=>['required',
-                        'mimetypes:video/*,image/*',
-                        'max:20000'
-                      ],
+            'file'=>['required','mimetypes:video/*,image/*', 'max:20000'],
         ];
     }
 
+    /** @return array
+     */
     public function attributes()
     {
-        return ['file.*'=>'Archivo'];
+        return ['file.*'=>"Archive: \"{$this->file->getClientOriginalName()}\""];
     }
 
     /**
@@ -44,11 +47,11 @@ class MediaRequest extends FormRequest
      */
     public function upload()
     {
-        $file =  $this->file[0]->store('public');
+        $file =  $this->file->store('public');
 
         return Media::create([
             'name'=>$file,
-            'type'=>$this->file[0]->getClientMimeType()
+            'type'=>$this->file->getClientMimeType()
         ]);
 
     }

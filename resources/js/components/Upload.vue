@@ -8,9 +8,7 @@
                       @vdropzone-success="successUpload"
                       @vdropzone-removed-file="deleteUpload"
                       class="dropzone"
-                      ref="dropzoneFile"
-
-        >
+                      ref="dropzoneFile">
             <div class="dropzone-custom-content">
                 <h3 class="dropzone-custom-title">Drag and drop to upload content!</h3>
                 <div class="subtitle">...or click to select a file from your computer</div>
@@ -33,7 +31,7 @@
                     acceptedFiles: "image/*,video/*",
                     paramName: "file", // The name that will be used to transfer the file
                     addRemoveLinks: true,
-                    uploadMultiple: true,
+                    uploadMultiple: false,
                     maxFilesize: 20, // MB
                     parallelUploads: 1,
                     dictRemoveFile: 'Remove',

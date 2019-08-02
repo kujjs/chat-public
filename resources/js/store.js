@@ -7,7 +7,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
+        user_id: localStorage.getItem('user_id') || '',
         name: localStorage.getItem('name') || '',
+        users: [],
         messages: [],
         files: [],
         errors: [],
@@ -29,8 +31,11 @@ export default new Vuex.Store({
             state.messages = messages;
         },
         set_message(state, message) {
-
-            state.messages.unshift(message);
+            state.messages.push(message);
+        },
+        remove_message(state, message) {
+            let i = state.messages.map(item => item.id).indexOf(message.id);
+            state.messages.splice(i, 1);
         },
         set_file(state, file) {
             state.files.push(file);
@@ -59,9 +64,20 @@ export default new Vuex.Store({
         },
         set_name(state, name) {
             state.name = name
-        }
-
-
+        },
+        set_userId(state, id) {
+            state.id = id
+        },
+        set_users(state, users) {
+            state.users = users;
+        },
+        push_user(state, user) {
+            state.users.push(user);
+        },
+        remove_user(state, user) {
+            let i = state.users.map(item => item.id).indexOf(user.id);
+            state.users.splice(i, 1);
+        },
     },
     actions: {
         pushFile({commit}, file) {
@@ -69,7 +85,7 @@ export default new Vuex.Store({
 
         },
         removeFile({commit}, file) {
-            //TODO:axio remove file in server
+            //TODO: add axio remove file in server
             commit('remove_file', file)
         },
         pushError({commit}, error) {
@@ -78,8 +94,8 @@ export default new Vuex.Store({
         clearError({commit}) {
             commit('clean_error');
         },
-        setMessage({commit},message) {
-            commit('set_message',message);
+        setMessage({commit}, message) {
+            commit('set_message', message);
         },
         clearFiles({commit}) {
             commit('clean_files')
@@ -90,6 +106,7 @@ export default new Vuex.Store({
             axios.get('/api/messages').then(res => {
                 commit('set_messages', res.data);
                 commit('change_loading', false);
+
             })
 
         },
@@ -97,56 +114,82 @@ export default new Vuex.Store({
             commit('change_sending', state);
         },
         sendMessage({commit, state, getters}, data) {
-            commit('change_sending', true);
-            axios.defaults.headers.common['Authorization'] = 'Bearer ' + state.accessToken;
-            let sendData = {
-                id: getters.messagesId[0] + 1,
-                name: state.name,
-                body: data.message,
-                media: state.files,
-                created_at: Date.now(),
-                updated_at: Date.now(),
-            };
+            return new Promise((resolve,reject) => {
+                commit('change_sending', true);
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + state.accessToken;
+                let sendData = {
+                    id: getters.messagesId[getters.messagesId.length],
+                    user_id: state.user_id,
+                    name: state.name,
+                    body: data.message,
+                    media: state.files,
+                    created_at: Date.now(),
+                    updated_at: Date.now(),
+                };
 
-            commit('set_message', sendData);
+                commit('set_message', sendData);
 
-            axios.post('/api/messages', sendData).then(res => {
-
+                axios.post('/api/messages', sendData).then(res => {
+                    resolve(res);
+                    commit('clean_error');
+                    commit('change_sending', false);
+                }).catch(error => {
+                    reject(error.response.data.errors);
+                    commit('clean_error');
+                    commit('change_sending', false);
+                    commit('set_error', error.response.data.errors.body[0]);
+                    commit('remove_message', sendData);
+                });
             });
-            commit('change_sending', false);
-
         },
         login({commit, state}, data) {
             commit('change_sending', true);
             axios.post('/api/login', data).then(res => {
 
+                localStorage.setItem('user_id', res.data.id);
                 localStorage.setItem('accessToken', res.data.access_token);
                 localStorage.setItem('name', res.data.name);
+
+                commit('set_userId', res.data.id);
                 commit('setAccessToken', res.data.access_token);
                 commit('set_name', res.data.name);
-                router.push('/');
+
                 commit('change_sending', false);
+                router.push('/');
             }, error => {
-                console.log(error.message)
+                console.log(error.message);
                 commit('change_sending', false);
             });
 
         },
-        logout({commit, state}, data) {
+        logout({commit, state}) {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + state.accessToken;
             commit('change_sending', true);
 
-            axios.post('/api/logout', data).then(res => {
-                localStorage.setItem('accessToken', null);
-                commit('setAccessToken', null);
-                router.push('/login');
-                commit('change_sending', false);
-            }, error => {
-                localStorage.setItem('accessToken', null);
-                commit('setAccessToken', null);
-                commit('change_sending', false);
-            });
-        }
+            axios.post('/api/logout').then(res => {}, error => {});
+            commit('change_sending', false);
+            window.Echo.leave('chat');
+            localStorage.setItem('user_id', null);
+            localStorage.setItem('accessToken', null);
+            localStorage.setItem('name', null);
+
+            commit('set_userId', null);
+            commit('setAccessToken', null);
+            commit('set_name', null);
+            router.push('/login');
+
+        },
+        setUsers({commit}, data) {
+            commit('set_users', data);
+        },
+        pushUser({commit}, data) {
+            commit('push_user', data);
+        },
+        removeUser({commit}, data) {
+            commit('remove_user', data);
+        },
+
+
     }
 });
 

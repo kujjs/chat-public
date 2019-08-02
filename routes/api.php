@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('messages', 'MessageController@store');
 
     Route::post('file', 'MessageController@upload');
+    Route::post('logout', 'ChatController@logout');
 });
 
 Route::post('login', 'ChatController@login');

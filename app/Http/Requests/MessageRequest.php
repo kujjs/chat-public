@@ -3,13 +3,32 @@
 namespace App\Http\Requests;
 
 use App\Events\newMessageEvent;
+
 use App\Message;
+use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Redis;
 
+/**
+ * @property string body
+ * @property array  media
+ */
 class MessageRequest extends FormRequest
 {
+    /**
+     * @var User
+     */
+    private $user;
+
+    /**
+     * MessageRequest constructor.
+     * @param User $user
+     */
+    public function __construct(User $user)
+    {
+        $this->user = auth()->user();
+    }
+
     /**
      * Determine if the name is authorized to make this request.
      *
@@ -33,9 +52,13 @@ class MessageRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return Message
+     */
     public function createMessage()
     {
-        $message = Auth()->user()->messages()->create([
+        /** @var Message $message */
+        $message = $this->user->messages()->create([
             'body' => $this->body
         ]);
 
@@ -44,7 +67,7 @@ class MessageRequest extends FormRequest
             $message->load('media');
         }
 
-        // TODO:call new event
+
         broadcast(new newMessageEvent($message))->toOthers();;
 
         return $message;

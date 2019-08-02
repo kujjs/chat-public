@@ -6,6 +6,7 @@ use App\Message;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
@@ -15,7 +16,7 @@ class ChatController extends Controller
     }
     public function messages()
     {
-        return Message::orderby('created_at','desc')->with('media','user:id,name')->get()->toArray();
+        return Message::with('media','user:id,name')->get()->toArray();
     }
     public function login(Request $request)
     {
@@ -34,6 +35,7 @@ class ChatController extends Controller
         $token->save();
 
         return response()->json([
+            'id'         => $user->id,
             'name'         => $user->name,
             'access_token' => $tokenResult->accessToken,
             'token_type'   => 'Bearer',
@@ -41,5 +43,12 @@ class ChatController extends Controller
                 $tokenResult->token->expires_at)
                 ->toDateTimeString(),
         ]);
+    }
+
+    public function logout()
+    {
+        $user = Auth::user()->token();
+        $user->revoke();
+        return 'logged out';
     }
 }

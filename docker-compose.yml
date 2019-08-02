@@ -43,23 +43,14 @@ services:
       MYSQL_DATABASE: site
     networks:
       - mynet
-#  node:
-#    image: node:8.16-alpine
-#    working_dir: /var/www/html
-#    volumes:
-#      - ./:/var/www/html
   supervisord:
     build:
       context: ./
       dockerfile: ./docker/supervisor/Dockerfile
     restart: always
-
-#    environment:
-#      SUPERVISOR_CONF_FILE: ./docker/supervisor/supervisor.conf
     volumes:
       - ./docker/supervisor/supervisord.conf:/etc/supervisord.conf
       - ./docker/supervisor/workers.ini:/etc/supervisor.d/workers.ini
-#      - ./docker/supervisor/supervisor.conf:/etc/supervisor.d
       - ./:/var/www/html
     ports:
       - 6001:6001
