@@ -32,18 +32,14 @@
             this.$store.dispatch('getMessages');
             Echo.join('chat')
                 .here(users => {
-                    console.log(users)
                     this.$store.dispatch('setUsers', users);
                 })
                 .joining(user => {
-                    console.log(user,this.$store.user_id)
                     if (user.id != this.$store.user_id){
                         this.$store.dispatch('pushUser', user);
-
                     }
                 })
                 .leaving(user => {
-                    console.log('leaving',user)
                     this.$store.dispatch('removeUser', user);
                 })
                 .listen('newMessageEvent', (e) => {

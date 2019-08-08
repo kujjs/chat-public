@@ -41,16 +41,18 @@
         name: "Login",
         data(){
           return {
-              name:'Demo',
-              email:'demo@example.com'
+              name:'',
+              email:''
           };
         },
         methods:{
             login(){
-                this.$store.dispatch('login', {
-                    name:this.name,
-                    email:this.email
-                });
+                if (this.name && this.email) {
+                    this.$store.dispatch('login', {
+                        name:this.name,
+                        email:this.email
+                    });
+                }
             }
         }
     }
